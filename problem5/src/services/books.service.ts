@@ -1,6 +1,6 @@
 import { STATUS } from '@prisma/client'
 import { prisma } from '~/libs/prisma'
-import { normalizeTags, parseSort } from '~/utils/helpers'
+import { configFilters, normalizeTags, parseSort } from '~/utils/helpers'
 
 export async function create(payload: {
   title: string
@@ -58,6 +58,12 @@ export async function list(q: {
     prisma.book.findMany({ where, orderBy, skip, take: q.limit })
   ])
 
+  const filterInput = {
+    ...q,
+    tag: tagList
+  }
+  const filters = configFilters(filterInput)
+
   return {
     data,
     meta: {
@@ -66,7 +72,7 @@ export async function list(q: {
       total,
       totalPages: Math.ceil(total / q.limit),
       sort: q.sort ?? '-createdAt',
-      filters: { ...q, tag: tagList }
+      ...(Object.keys(filters).length > 0 ? { filters: filters } : {})
     }
   }
 }

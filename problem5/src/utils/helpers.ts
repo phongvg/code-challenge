@@ -18,3 +18,20 @@ export function normalizeTags(tags?: string[]) {
   if (!tags) return []
   return [...new Set(tags.map((t) => t.trim()).filter(Boolean))].slice(0, 20)
 }
+
+export function configFilters(query: Record<string, any>): Record<string, any> {
+  const filters: Record<string, any> = {}
+
+  for (const [key, value] of Object.entries(query)) {
+    if (
+      value !== undefined &&
+      value !== null &&
+      (typeof value === 'string' ? value.trim() !== '' : true) &&
+      !(Array.isArray(value) && value.length === 0)
+    ) {
+      filters[key] = value
+    }
+  }
+
+  return filters
+}

@@ -22,8 +22,9 @@ model Book {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([title, author], map: "idx_text_search")
   @@index([createdAt], map: "idx_createdAt")
-  @@index([status], map: "idx_status")
+  @@index([status], map: "idx_status") 
   @@index([title], map: "idx_title")
   @@index([author], map: "idx_author")
 }
