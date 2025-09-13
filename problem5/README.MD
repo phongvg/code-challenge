@@ -45,8 +45,8 @@ src/
 ### 2. Clone & Install
 
 ```bash
-git clone https://github.com/your-repo/bookstore-api.git
-cd bookstore-api
+git clone https://github.com/phongvg/code-challenge.git
+cd code-challenge/project5
 npm install
 docker-compose up -d
 npm run db:push
