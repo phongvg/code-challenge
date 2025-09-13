@@ -1,0 +1,29 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum STATUS {
+  ACTIVE
+  INACTIVE
+}
+
+model Book {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  author    String?
+  year      Int?
+  status    STATUS   @default(ACTIVE)
+  tags      String[] @default([])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdAt], map: "idx_createdAt")
+  @@index([status], map: "idx_status")
+  @@index([title], map: "idx_title")
+  @@index([author], map: "idx_author")
+}
