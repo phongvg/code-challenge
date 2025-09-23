@@ -27,3 +27,7 @@ export const BookListQuerySchema = z
     limit: z.coerce.number().int().min(1).max(100).default(10)
   })
   .strict()
+
+export type BookCreateDto = z.infer<typeof BookCreateSchema>
+export type BookUpdateDto = z.infer<typeof BookUpdateSchema>
+export type BookListQuery = z.infer<typeof BookListQuerySchema>

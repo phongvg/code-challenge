@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import * as booksService from '~/services/books.service'
 import { HTTP_STATUS } from '~/constants/httpStatus'
 import { MESSAGE } from '~/constants/message'
+import { BookListQuery } from '~/schemas/book.schema'
 
 export async function create(req: Request, res: Response, next: NextFunction) {
   try {
@@ -14,7 +15,7 @@ export async function create(req: Request, res: Response, next: NextFunction) {
 
 export async function list(req: Request, res: Response, next: NextFunction) {
   try {
-    const parsedQuery = (res.locals.query as any) ?? (req.query as any)
+    const parsedQuery = (res.locals.query as BookListQuery) ?? (req.query as Partial<BookListQuery>)
     const out = await booksService.list(parsedQuery)
     res.json(out)
   } catch (e) {

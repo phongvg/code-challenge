@@ -1,4 +1,4 @@
-import { ZodSchema, ZodError } from 'zod'
+import { ZodType, ZodError } from 'zod'
 import DOMPurify from 'isomorphic-dompurify'
 import { Request, Response, NextFunction } from 'express'
 
@@ -23,7 +23,7 @@ function sanitizeInput(input: any): any {
 }
 
 export const validateBody =
-  <T>(schema: ZodSchema<T>) =>
+  <T>(schema: ZodType<T>) =>
   (req: Request, res: Response, next: NextFunction) => {
     try {
       const sanitizedBody = sanitizeInput(req.body)
@@ -36,15 +36,17 @@ export const validateBody =
   }
 
 export const validateQuery =
-  <T>(schema: ZodSchema<T>) =>
+  <T>(schema: ZodType<T>) =>
   (req: Request, res: Response, next: NextFunction) => {
     try {
       const parsed = schema.parse(req.query) as T
       res.locals.query = parsed
       next()
     } catch (e) {
-      const err = e as ZodError
-      res.status(400).json({ error: { code: 'VALIDATION_ERROR', details: err.flatten() } })
+      if (e instanceof ZodError) {
+        const details = e.flatten(() => e.message)
+        res.status(400).json({ error: { code: 'VALIDATION_ERROR', details: details } })
+      }
     }
   }
 

@@ -7,9 +7,7 @@ export function parseSort(sort?: string): Prisma.BookOrderByWithRelationInput {
   const field = raw.replace(/^-/, '')
   const dir = raw.startsWith('-') ? 'desc' : 'asc'
   if (!SORT_WHITELIST.has(field)) {
-    const e: any = new Error(`Invalid sort field: ${field}`)
-    e.status = 400
-    throw e
+    throw Object.assign(new Error(`Invalid sort field: ${field}`), { status: 400 })
   }
   return { [field]: dir } as Prisma.BookOrderByWithRelationInput
 }

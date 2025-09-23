@@ -1,14 +1,9 @@
-import { STATUS } from '@prisma/client'
+import { Prisma, STATUS } from '@prisma/client'
 import { prisma } from '~/libs/prisma'
+import { BookCreateDto, BookListQuery, BookUpdateDto } from '~/schemas/book.schema'
 import { configFilters, normalizeTags, parseSort } from '~/utils/helpers'
 
-export async function create(payload: {
-  title: string
-  author?: string
-  year?: number
-  status?: STATUS
-  tags?: string[]
-}) {
+export async function create(payload: BookCreateDto) {
   return prisma.book.create({
     data: {
       title: payload.title,
@@ -20,24 +15,14 @@ export async function create(payload: {
   })
 }
 
-export async function list(q: {
-  q?: string
-  author?: string
-  status?: STATUS
-  year_from?: number
-  year_to?: number
-  tag?: string[] | string
-  sort?: string
-  page: number
-  limit: number
-}) {
+export async function list(q: BookListQuery) {
   if (q.year_from && q.year_to && q.year_from > q.year_to) {
     const e: any = new Error('year_from must be <= year_to')
     e.status = 400
     throw e
   }
 
-  const where: any = {}
+  const where: Prisma.BookWhereInput = {}
   if (q.q)
     where.OR = [{ title: { contains: q.q, mode: 'insensitive' } }, { author: { contains: q.q, mode: 'insensitive' } }]
   if (q.author) where.author = q.author
@@ -79,10 +64,7 @@ export async function list(q: {
 
 export const getById = (id: string) => prisma.book.findUnique({ where: { id } })
 
-export async function update(
-  id: string,
-  payload: Partial<{ title: string; author?: string; year?: number; status?: STATUS; tags?: string[] }>
-) {
+export async function update(id: string, payload: BookUpdateDto) {
   const data: any = { ...payload }
   if (payload.tags) data.tags = normalizeTags(payload.tags)
   return prisma.book.update({ where: { id }, data })

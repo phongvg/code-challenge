@@ -3,6 +3,7 @@ import cors from 'cors'
 import helmet from 'helmet'
 import compression from 'compression'
 import pino from 'pino-http'
+// import pretty from 'pino-pretty'
 import booksRouter from '~/routes/books.routes'
 import { errorHandler } from '~/middlewares/error.middlewares'
 
@@ -12,6 +13,9 @@ const app = express()
 app.use(
   pino({
     level: process.env.LOG_LEVEL ?? 'info',
+    transport: {
+      target: 'pino-pretty'
+    },
     serializers: {
       req(req) {
         return { method: req.method, url: req.url }
